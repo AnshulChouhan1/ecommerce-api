@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="page-header">
+    <h1>Your Shopping Cart</h1>
+</div>
+
+<div class="card" style="padding: 2rem;">
+    {% if cart_items %}
+        <div class="table-responsive">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Product</th>
+                        <th>Price</th>
+                        <th>Quantity</th>
+                        <th>Subtotal</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in cart_items %}
+                    <tr>
+                        <td>
+                            <div style="display: flex; align-items: center; gap: 1rem;">
+                                <img src="{{ item.product.image_url }}" alt="..." style="width: 50px; height: 50px; object-fit: cover; border-radius: 4px;" onerror="this.src='https://via.placeholder.com/50'">
+                                <strong>{{ item.product.name }}</strong>
+                            </div>
+                        </td>
+                        <td>${{ "%.2f"|format(item.product.price) }}</td>
+                        <td>{{ item.quantity }}</td>
+                        <td>${{ "%.2f"|format(item.product.price * item.quantity) }}</td>
+                        <td>
+                            <form method="POST" action="{{ url_for('main.remove_from_cart', cart_item_id=item.id) }}">
+                                <button type="submit" class="btn-danger"><i class="fas fa-trash"></i></button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        
+        <div style="display: flex; justify-content: flex-end; margin-top: 2rem;">
+            <div style="text-align: right; width: 300px;">
+                <h3 style="margin-bottom: 1rem;">Total: ${{ "%.2f"|format(total) }}</h3>
+                <form method="POST" action="{{ url_for('main.checkout') }}">
+                    <button type="submit" class="btn-primary" style="width: 100%; font-size: 1.1rem; padding: 1rem;">Proceed to Checkout</button>
+                </form>
+            </div>
+        </div>
+    {% else %}
+        <div style="text-align: center; padding: 3rem;">
+            <i class="fas fa-shopping-cart" style="font-size: 4rem; color: var(--gray); margin-bottom: 1rem;"></i>
+            <h3>Your cart is empty</h3>
+            <p class="mt-4"><a href="{{ url_for('main.index') }}" class="btn-primary">Browse Products</a></p>
+        </div>
+    {% endif %}
+</div>
+
+{% endblock %}

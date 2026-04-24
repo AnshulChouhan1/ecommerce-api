@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="card" style="margin-top: 2rem; padding: 2rem;">
+    <a href="{{ url_for('main.index') }}" class="btn-outline mb-4"><i class="fas fa-arrow-left"></i> Back to Products</a>
+    
+    <div class="product-detail-grid">
+        <div>
+            <img src="{{ product.image_url }}" alt="{{ product.name }}" style="width: 100%; border-radius: var(--radius);" onerror="this.src='https://via.placeholder.com/600x500?text=No+Image'">
+        </div>
+        <div>
+            <h1>{{ product.name }}</h1>
+            <div class="product-price" style="font-size: 2.5rem;">${{ "%.2f"|format(product.price) }}</div>
+            
+            {% if product.stock > 0 %}
+                <span class="badge badge-delivered mb-4" style="display: inline-block;">In Stock ({{ product.stock }})</span>
+            {% else %}
+                <span class="badge badge-pending mb-4" style="display: inline-block;">Out of Stock</span>
+            {% endif %}
+            
+            <p class="product-desc" style="font-size: 1.1rem; line-height: 1.8;">{{ product.description }}</p>
+            
+            {% if current_user.is_authenticated %}
+                <form method="POST" action="{{ url_for('main.add_to_cart', product_id=product.id) }}" style="display: flex; gap: 1rem; margin-top: 2rem;">
+                    <input type="number" name="quantity" value="1" min="1" max="{{ product.stock }}" class="form-control" style="width: 100px;">
+                    <button type="submit" class="btn-primary" {% if product.stock < 1 %}disabled{% endif %}>
+                        <i class="fas fa-cart-plus"></i> Add to Cart
+                    </button>
+                </form>
+            {% else %}
+                <div class="alert alert-info mt-4">
+                    Please <a href="{{ url_for('auth.login') }}">log in</a> to add this item to your cart.
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+{% endblock %}

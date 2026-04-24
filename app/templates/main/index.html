@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="page-header">
+    <h1>Our Products</h1>
+    <form class="search-form" method="GET" action="{{ url_for('main.index') }}">
+        <input type="text" name="q" class="form-control" placeholder="Search products..." value="{{ search_query }}">
+        <button type="submit" class="btn-primary">Search</button>
+    </form>
+</div>
+
+{% if products.items %}
+    <div class="grid-3">
+        {% for product in products.items %}
+        <div class="card">
+            <img src="{{ product.image_url }}" alt="{{ product.name }}" class="product-img" onerror="this.src='https://via.placeholder.com/300x250?text=No+Image'">
+            <div class="card-body">
+                <h3>{{ product.name }}</h3>
+                <div class="product-price">${{ "%.2f"|format(product.price) }}</div>
+                <p>{{ product.description[:60] }}...</p>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 1rem;">
+                    <a href="{{ url_for('main.product', product_id=product.id) }}" class="btn-outline">View Details</a>
+                    {% if current_user.is_authenticated %}
+                        <form method="POST" action="{{ url_for('main.add_to_cart', product_id=product.id) }}">
+                            <input type="hidden" name="quantity" value="1">
+                            <button type="submit" class="btn-primary"><i class="fas fa-cart-plus"></i> Add</button>
+                        </form>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Pagination -->
+    <div class="pagination">
+        {% for page_num in products.iter_pages(left_edge=1, right_edge=1, left_current=1, right_current=2) %}
+            {% if page_num %}
+                {% if products.page == page_num %}
+                    <a class="active" href="{{ url_for('main.index', page=page_num, q=search_query) }}">{{ page_num }}</a>
+                {% else %}
+                    <a href="{{ url_for('main.index', page=page_num, q=search_query) }}">{{ page_num }}</a>
+                {% endif %}
+            {% else %}
+                <span class="pagination-ellipsis">...</span>
+            {% endif %}
+        {% endfor %}
+    </div>
+{% else %}
+    <div class="card" style="text-align: center; padding: 4rem;">
+        <h3>No products found.</h3>
+        <a href="{{ url_for('main.index') }}" class="btn-primary mt-4">Clear Search</a>
+    </div>
+{% endif %}
+
+{% endblock %}
