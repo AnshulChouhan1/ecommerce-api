@@ -50,6 +50,41 @@ A full-stack e-commerce web application built with Python, Flask, and SQLite. Fe
 - **Admin User:** `admin@elevastore.com` / `password123`
 - **Customer User:** `user@test.com` / `password123`
 
+## Mock API Documentation
+The application features internal APIs that simulate a third-party shipping/tracking backend. 
+
+### 1. Get Latest Order Status
+`GET /latest-order/<user_id>`
+Returns the real-time shipping status and product breakdown of a user's most recent order.
+**Example Response:**
+```json
+{
+  "order_id": 1,
+  "product": "2x Smart Watch Series X, 1x Shoes",
+  "status": "Out for delivery",
+  "user_id": 12,
+  "user_name": "John Doe"
+}
+```
+
+### 2. Get Order Items array
+`GET /order-items/<order_id>`
+Returns a comprehensive line-item array of individual products within a specific order.
+**Example Response:**
+```json
+[
+  {
+    "order_item_id": 1,
+    "price_per_unit": 199.5,
+    "product_id": 2,
+    "product_name": "Smart Watch Series X",
+    "quantity": 2,
+    "subtotal": 399.0,
+    "user_name": "John Doe"
+  }
+]
+```
+
 ## Project Structure
 - `app/` - The core application package containing Flask Blueprints (`auth`, `main`, `admin`, `api`, `mock_api`).
 - `config.py` - Sets configuration variables.
